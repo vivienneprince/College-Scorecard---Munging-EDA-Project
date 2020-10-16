@@ -5,23 +5,43 @@ date: "10/1/2020"
 output: html_document
 ---
 
+Package import
+```{r}
+# Load package
+# install.packages("flux")
+library(rscorecard)
+```
+
+
+Import field variables
+```{r}
+starfish.fields <- read.csv("Data/Starfish_Fields.csv")
+head(starfish.fields)
+starfish.colnames <- tolower(starfish.colnames$VARIABLE.NAME)
+```
+
 
 # Accessing Data
 ```{r}
-# Load package
-library(rscorecard)
-
 sc_key('lt36uO4r7wWfcijac20x6e6FforftHUitahjuh1A')
 
-
-df <- sc_init() %>% 
-    sc_filter(region == 2, ccbasic == c(21,22,23), locale == 41:43) %>% 
-    sc_select(unitid, instnm, stabbr) %>% 
-    sc_year("latest") %>% 
+starfish.df <- sc_init() %>%  
+    sc_filter(stabbr == 'FL') %>% 
+    sc_select_(starfish.colnames) %>%
     sc_get()
-head(df)
 
-dict_df <- sc_dict('.', print_off = TRUE, return_df = TRUE)
-dict_df
+for (year in 2015:2018) {
+  starfishdf.temp <- sc_init() %>%
+    sc_filter(stabbr == 'FL') %>%
+    sc_select_(starfish.colnames) %>%
+    sc_year(year) %>%
+    sc_get()
+  starfish.df <- rbind(starfish.df, starfishdf.temp)
+}
+
+
+head(starfishdf)
+
+
 ```
 
