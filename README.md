@@ -9,4 +9,4 @@ Project 1 - College scoreboard
 Scope:
 Fields to pull: https://docs.google.com/spreadsheets/d/1PL5zn6QLU9GSSD8rRreL8r7xaoClrPIrf5qnioZ3eE4/edit?usp=sharing
 Years: 2015-latest (2019-2020)
-Region: TBD (Florida or South East States?)
+Region: 5 (Southeast (AL, AR, FL, GA, KY, LA, MS, NC, SC, TN, VA, WV))
