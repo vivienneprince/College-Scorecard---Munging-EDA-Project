@@ -51,9 +51,9 @@ qualitycheck <- function(df, critereon=3) {
   
   # return table setup
   returntable <- matrix(nrow=col_count,ncol=2,byrow=TRUE)
-  colnames(returntable) <- c("Ratio Completeness","Ratio Outliers")
+  colnames(returntable) <- c("Ratio_Completeness","Ratio_Outliers")
   rownames(returntable) <- colnames(df)
-  returntable <- as.table(returntable)
+  # returntable <- as.table(returntable)
   
   
   for (i in 1:col_count) {
@@ -76,8 +76,13 @@ qualitycheck <- function(df, critereon=3) {
     # Write check values into table:
     returntable[i,] <- matrix(c(naratio.count, outliers.count),ncol=2)
   }
+  returndf <- as.data.frame(returntable)
+  returndf$Ratio_Completeness <- as.numeric(returndf$Ratio_Completeness)
   
-  return(returntable)
+  returndf <- cbind(VAR_NAME = rownames(returndf), returndf)
+  rownames(returndf) <- NULL
+  
+  return(returndf)
   
 }
 ```
@@ -85,6 +90,9 @@ $~$
   
 ##### Quality check:
 ```{r}
-qualitycheck(raw.df)
+data.quality <- qualitycheck(raw.df)
+hist(data.quality$Ratio_Completeness)
+data.quality[data.quality$Ratio_Completeness == 0, 1:2]
+data.quality[data.quality$Ratio_Outliers == 'not numeric', ]
 ```
 
