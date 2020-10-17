@@ -1,0 +1,90 @@
+---
+title: ""
+output: html_document
+---
+
+
+```{r, eval=TRUE, include=FALSE}
+
+# install.packages("reshape") 
+# install.packages("dplyr")
+# install.packages("ggplot2")
+library(reshape)
+library(dplyr)
+library(ggplot2)
+library(googlesheets4)
+
+# getwd()
+project.dir <- "Homework/Project 1 - College Scoreboard"
+dataset.dir <- "Data"
+outputs.dir <- "Output"
+# setwd(project.dir)
+
+```
+$~$    
+    
+## Import data
+```{r}
+# Import raw data
+raw.df <- read.csv(file = file.path(dataset.dir, "starfishdf.csv"))
+colnames(raw.df)
+
+# Import field variables
+gs4_deauth()
+starfish.fields <- read_sheet('https://docs.google.com/spreadsheets/d/1PL5zn6QLU9GSSD8rRreL8r7xaoClrPIrf5qnioZ3eE4/edit?usp=sharing')
+```
+$~$    
+  
+## Data Quality   
+##### Data Quality Check Function   
+This is our function for checking the completeness and free-of-error dimensions of data quality as described by Pipino, Lee, and Wang.   
+
+For completeness, we calculated the ratio of non-na values within each column. So a value of 1 would signify there are no na's in that column.   
+
+For free-of-error, we returned the ratio of outliers within each numeric column. If the column is not numeric, it shows 'not numeric'. Outliers are by default defined as 3IQR less than the 1st quartile, or 3IQR more than the 3rd quartile. The IQR multiplier can be user specified by adding the argument 'criterion= x' where x is the desired multiplier to the function call. So a value of 0 would signify there are no outliers based on the criteria specified.    
+
+```{r}
+qualitycheck <- function(df, critereon=3) { 
+
+  # setup
+  col_count <- ncol(df)
+  
+  # return table setup
+  returntable <- matrix(nrow=col_count,ncol=2,byrow=TRUE)
+  colnames(returntable) <- c("Ratio Completeness","Ratio Outliers")
+  rownames(returntable) <- colnames(df)
+  returntable <- as.table(returntable)
+  
+  
+  for (i in 1:col_count) {
+    
+    # Completeness check: percentage of non-na values
+    na_count <- sum(length(which(is.na(df[,i]))))
+    naratio.count <- (1 - (na_count/nrow(df)) )
+
+    
+    # Free-of-error check: count of  outliers
+    if ( class(df[1,i])==class(1) || class(df[1,i])==class(1.0) ) {
+      IQR <- quantile(df[,i], .75, na.rm = T) - quantile(df[,i], .25, na.rm = T)
+      threshold.upper <- quantile(df[,i], .75, na.rm = T) + IQR*critereon
+      threshold.lower <- quantile(df[,i], .25, na.rm = T) - IQR*critereon
+      outliers.index <- which(df[,i] > threshold.upper | df[,i] < threshold.lower)
+      outliers.count <- length(outliers.index)/col_count
+    }
+    else outliers.count='not numeric'
+    
+    # Write check values into table:
+    returntable[i,] <- matrix(c(naratio.count, outliers.count),ncol=2)
+  }
+  
+  return(returntable)
+  
+}
+```
+$~$    
+  
+##### Quality check:
+```{r}
+qualitycheck(raw.df)
+```
+
