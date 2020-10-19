@@ -101,19 +101,26 @@ Midpoint of SAT scores at the institution (math),admissions,sat_scores.midpoint.
 Midpoint of SAT scores at the institution (writing),admissions,sat_scores.midpoint.writing,float,SATWRMID,,,IPEDS,
 Unit ID for institution,root,id,,unitid,,,IPEDS,Shown/used on consumer website.
 Institution name,school,name,,instnm,,,IPEDS,Shown/used on consumer website.
-Percentage first-generation students,student,share_firstgeneration,,"par_ed_pct_1stgen",,,NSLDS,"A 3-year cohort default rate is the percentage of a school's borrowers who enter repayment on certain Federal Family Education Loan (FFEL) Program or William D. Ford Federal Direct Loan (Direct Loan) Program loans during a particular federal fiscal year (FY), October 1 to September 30, and default or meet other specified conditions prior to the end of the second following fiscal year. Please refer to the Cohort Default Rate Guide for a more in-depth description of cohort default rates and how the rates are calculated."
+Percentage first-generation students,student,share_firstgeneration,,"par_ed_pct_1stgen
+",,,NSLDS,"A 3-year cohort default rate is the percentage of a school's borrowers who enter repayment on certain Federal Family Education Loan (FFEL) Program or William D. Ford Federal Direct Loan (Direct Loan) Program loans during a particular federal fiscal year (FY), October 1 to September 30, and default or meet other specified conditions prior to the end of the second following fiscal year. Please refer to the Cohort Default Rate Guide for a more in-depth description of cohort default rates and how the rates are calculated.
+"
 The median debt for students who have completed,"aid
 ","median_debt.completers.overall
 ",,"grad_debt_mdn
-",,,NSLDS,"A 3-year cohort default rate is the percentage of a school's borrowers who enter repayment on certain Federal Family Education Loan (FFEL) Program or William D. Ford Federal Direct Loan (Direct Loan) Program loans during a particular federal fiscal year (FY), October 1 to September 30, and default or meet other specified conditions prior to the end of the second following fiscal year. Please refer to the Cohort Default Rate Guide for a more in-depth description of cohort default rates and how the rates are calculated."
-"First-time, full-time student retention rate at four-year institutions","student
+",,,NSLDS,"A 3-year cohort default rate is the percentage of a school's borrowers who enter repayment on certain Federal Family Education Loan (FFEL) Program or William D. Ford Federal Direct Loan (Direct Loan) Program loans during a particular federal fiscal year (FY), October 1 to September 30, and default or meet other specified conditions prior to the end of the second following fiscal year. Please refer to the Cohort Default Rate Guide for a more in-depth description of cohort default rates and how the rates are calculated.
+"
+"First-time, full-time student retention rate at four-year institutions
+","student
 ","retention_rate.four_year.full_time
 ",,"ret_ft4
-",,,"IPEDS","The proportion of full-time, first-time, degree/certificate-seeking undergraduates who were enrolled at the institution in the fall 1 year after starting at the institution, calculated from the IPEDS Fall Enrollment component. Separate metrics are calculated for 4-year institutions and less-than-4-year institutions. The retention rate is calculated as the number of full-time, first-time, degree/certificate-seeking undergraduates enrolled in the fall of the prior academic year that are enrolled in the fall term of the current academic year divided by the number of full-time, first-time, degree/certificate-seeking undergraduates enrolled in the fall of the prior academic year. For 4-year institutions, this metric is limited to full-time, first-time, bachelor's or quivalent degree-seeking undergraduate students. For less-than-4-year institutions, this metric applies to all full-time, first-time, degree/certificate-seeking undergraduate students. This metric is not available prior to the 2004-05 academic year. Proportions are expressed as decimals rounded to four decimal places, so, for example, 0.1234 equals 12.34 percent."
+",,,"IPEDS
+","The proportion of full-time, first-time, degree/certificate-seeking undergraduates who were enrolled at the institution in the fall 1 year after starting at the institution, calculated from the IPEDS Fall Enrollment component. Separate metrics are calculated for 4-year institutions and less-than-4-year institutions. The retention rate is calculated as the number of full-time, first-time, degree/certificate-seeking undergraduates enrolled in the fall of the prior academic year that are enrolled in the fall term of the current academic year divided by the number of full-time, first-time, degree/certificate-seeking undergraduates enrolled in the fall of the prior academic year. For 4-year institutions, this metric is limited to full-time, first-time, bachelor's or quivalent degree-seeking undergraduate students. For less-than-4-year institutions, this metric applies to all full-time, first-time, degree/certificate-seeking undergraduate students. This metric is not available prior to the 2004-05 academic year. Proportions are expressed as decimals rounded to four decimal places, so, for example, 0.1234 equals 12.34 percent.
+"
 "Percent of all undergraduate students receiving a federal student loan
 ",aid,federal_loan_rate,,pctfloan,,,IPEDS,"The proportion of undergraduates who received a federal loan in the academic year, calculated from values from the IPEDS Student Financial Aid component. Proportions are expressed as decimals rounded to four decimal places, so, for example, 0.1234 equals 12.34 percent. This metric is not available prior to the 2009-10 academic year.
 "
-"Average family income of dependent students in real 2015 dollars.",student,"avg_dependent_income.2014dollars
+"Average family income of dependent students in real 2015 dollars.
+",student,"avg_dependent_income.2014dollars
 ",,"dep_inc_avg
 ",,,NSLDS,"A 3-year cohort default rate is the percentage of a school's borrowers who enter repayment on certain Federal Family Education Loan (FFEL) Program or William D. Ford Federal Direct Loan (Direct Loan) Program loans during a particular federal fiscal year (FY), October 1 to September 30, and default or meet other specified conditions prior to the end of the second following fiscal year. Please refer to the Cohort Default Rate Guide for a more in-depth description of cohort default rates and how the rates are calculated.
 "
@@ -128,7 +135,9 @@ Degree of urbanization of institution,school,degree_urbanization,integer,LOCALE2
 Latitude,root,location.lat,float,LATITUDE,,,IPEDS,
 Longitude,root,location.lon,float,LONGITUDE,,,IPEDS,
 State postcode,"	
-school","state",,"stabbr",,,,
+school","state
+",,"stabbr
+",,,,
 "Control of institution
 ",school,ownership,,control,,,,
 Predominant undergraduate degree awarded,school,degrees_awarded.predominant,,"	
