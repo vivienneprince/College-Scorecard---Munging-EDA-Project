@@ -1,41 +1,44 @@
 ---
-title: ""
-output: html_document
+title: "Team Starfish"
+output: 
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '3'
+    toc_float: yes
 ---
 
 
 ```{r, eval=TRUE, include=FALSE}
 
-# install.packages("reshape") 
-# install.packages("dplyr")
-# install.packages("ggplot2")
-library(reshape)
-library(dplyr)
+# devtools::install_github("wmurphyrd/fiftystater")
+library(tidyverse)
 library(ggplot2)
+library(plotly)
+library(sf)
 library(googlesheets4)
+library(fiftystater)
 
 # getwd()
 project.dir <- "Homework/Project 1 - College Scoreboard"
 dataset.dir <- "Data"
 outputs.dir <- "Output"
-# setwd(project.dir)
-
+# setwd(file.path(getwd(), project.dir))
 ```
-$~$    
+   
     
-## Import data
+# Import data
 ```{r}
 # Import raw data
 raw.df <- read.csv(file = file.path(dataset.dir, "starfishdf.csv"))
-colnames(raw.df)
 
 # Import field variables
 gs4_deauth()
 starfish.fields <- read_sheet('https://docs.google.com/spreadsheets/d/1PL5zn6QLU9GSSD8rRreL8r7xaoClrPIrf5qnioZ3eE4/edit?usp=sharing')
 ```
-$~$    
+     
   
-## Data Quality   
+# Data Quality   
 ##### Data Quality Check Function   
 This is our function for checking the completeness and free-of-error dimensions of data quality as described by Pipino, Lee, and Wang.   
 
@@ -86,13 +89,385 @@ qualitycheck <- function(df, critereon=3) {
   
 }
 ```
-$~$    
+      
   
-##### Quality check:
+#### Quality check:
 ```{r}
-data.quality <- qualitycheck(raw.df)
+ordered.df <- raw.df[,order(colnames(raw.df))]
+
+data.quality <- qualitycheck(ordered.df)
+
 hist(data.quality$Ratio_Completeness)
-data.quality[data.quality$Ratio_Completeness == 0, 1:2]
-data.quality[data.quality$Ratio_Outliers == 'not numeric', ]
+hist(suppressWarnings(as.numeric(data.quality$Ratio_Outliers)))
+
+# data.quality[data.quality$Ratio_Completeness == 0, 1:2]
+# data.quality[data.quality$Ratio_Outliers == 'not numeric', ]
 ```
 
+
+# Data clean up
+Remove all columns that are empty
+```{r}
+good.fields <- data.quality[data.quality$Ratio_Completeness != 0,1]
+clean.df <- ordered.df[, good.fields]
+qualitycheck(clean.df)
+hist(qualitycheck(clean.df)$Ratio_Completeness)
+```
+
+
+
+# Total share of enrollment of undergraduate degree-seeking students who are:
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Asian {.tabset}
+```{r, include=FALSE}
+data("fifty_states")
+years = c(2015, 2016, 2017, 2018, "latest")
+colors = c("#4CAF50", "#4CAF50", "#4CAF50", "#4CAF50", "#4CAF50")  # in case I want differnt colors later
+asians.map <- list()
+
+
+for (i in 1:5){
+  plot.temp <- suppressWarnings(
+    ggplot() + geom_polygon(
+    data = fifty_states,
+    aes(x = long, y = lat, group = group),
+    color = "white",
+    fill = "grey92") +
+    coord_sf(xlim = c(-88, -78),
+             ylim = c(24.5, 33),
+             expand = FALSE) +
+    geom_point(data = clean.df[clean.df$year == years[i],],
+               color = colors[i],
+               aes(x = longitude,
+                   y = latitude,
+                   size = ugds_asian)) +
+    scale_size(name = "", range = c(.2, 3)) +
+    guides(size = guide_legend("asians")) +
+    theme_void())
+  asians.map[[i]] <- list(plot.temp, years[i])
+}
+```
+
+### `r asians.map[[1]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(asians.map[[1]][[1]]))
+```
+
+### `r asians.map[[2]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(asians.map[[2]][[1]]))
+```     
+
+### `r asians.map[[3]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(asians.map[[3]][[1]]))
+```    
+
+### `r asians.map[[4]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(asians.map[[4]][[1]]))
+```    
+
+### `r asians.map[[5]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(asians.map[[5]][[1]]))
+```    
+
+
+
+
+## Hispanic {.tabset}
+```{r, include=FALSE}
+data("fifty_states")
+years = c(2015, 2016, 2017, 2018, "latest")
+dotcolor = "#03A9F4"
+peeps.map <- list()
+
+
+for (i in 1:5){
+  plot.temp <- suppressWarnings(
+    ggplot() + geom_polygon(
+    data = fifty_states,
+    aes(x = long, y = lat, group = group),
+    color = "white",
+    fill = "grey92") +
+    coord_sf(xlim = c(-88, -78),
+             ylim = c(24.5, 33),
+             expand = FALSE) +
+    geom_point(data = clean.df[clean.df$year == years[i],],
+               color = dotcolor,
+               aes(x = longitude,
+                   y = latitude,
+                   size = ugds_hisp)) +
+    scale_size(name = "", range = c(.2, 3)) +
+    guides(size = guide_legend("asians")) +
+    theme_void())
+  peeps.map[[i]] <- list(plot.temp, years[i])
+}
+```
+
+### `r asians.map[[1]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[1]][[1]]))
+```
+
+### `r asians.map[[2]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[2]][[1]]))
+```     
+
+### `r asians.map[[3]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[3]][[1]]))
+```    
+
+### `r asians.map[[4]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[4]][[1]]))
+```    
+
+### `r asians.map[[5]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[5]][[1]]))
+```    
+
+
+
+
+## Black {.tabset}
+```{r, include=FALSE}
+data("fifty_states")
+years = c(2015, 2016, 2017, 2018, "latest")
+dotcolor = "#673AB7"
+peeps.map <- list()
+
+
+for (i in 1:5){
+  plot.temp <- suppressWarnings(
+    ggplot() + geom_polygon(
+    data = fifty_states,
+    aes(x = long, y = lat, group = group),
+    color = "white",
+    fill = "grey92") +
+    coord_sf(xlim = c(-88, -78),
+             ylim = c(24.5, 33),
+             expand = FALSE) +
+    geom_point(data = clean.df[clean.df$year == years[i],],
+               color = dotcolor,
+               aes(x = longitude,
+                   y = latitude,
+                   size = ugds_black)) +
+    scale_size(name = "", range = c(.2, 3)) +
+    guides(size = guide_legend("asians")) +
+    theme_void())
+  peeps.map[[i]] <- list(plot.temp, years[i])
+}
+```
+
+### `r asians.map[[1]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[1]][[1]]))
+```
+
+### `r asians.map[[2]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[2]][[1]]))
+```     
+
+### `r asians.map[[3]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[3]][[1]]))
+```    
+
+### `r asians.map[[4]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[4]][[1]]))
+```    
+
+### `r asians.map[[5]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[5]][[1]]))
+```    
+
+
+
+
+## White {.tabset}
+```{r, include=FALSE}
+data("fifty_states")
+years = c(2015, 2016, 2017, 2018, "latest")
+dotcolor = "#FF5722"
+peeps.map <- list()
+
+
+for (i in 1:5){
+  plot.temp <- suppressWarnings(
+    ggplot() + geom_polygon(
+    data = fifty_states,
+    aes(x = long, y = lat, group = group),
+    color = "white",
+    fill = "grey92") +
+    coord_sf(xlim = c(-88, -78),
+             ylim = c(24.5, 33),
+             expand = FALSE) +
+    geom_point(data = clean.df[clean.df$year == years[i],],
+               color = dotcolor,
+               aes(x = longitude,
+                   y = latitude,
+                   size = ugds_white)) +
+    scale_size(name = "", range = c(.2, 3)) +
+    guides(size = guide_legend("asians")) +
+    theme_void())
+  peeps.map[[i]] <- list(plot.temp, years[i])
+}
+```
+
+### `r asians.map[[1]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[1]][[1]]))
+```
+
+### `r asians.map[[2]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[2]][[1]]))
+```     
+
+### `r asians.map[[3]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[3]][[1]]))
+```    
+
+### `r asians.map[[4]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[4]][[1]]))
+```    
+
+### `r asians.map[[5]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[5]][[1]]))
+```    
+
+
+
+
+## Women {.tabset}
+```{r, include=FALSE}
+data("fifty_states")
+years = c(2015, 2016, 2017, 2018, "latest")
+dotcolor = "#D4E157"
+peeps.map <- list()
+
+
+for (i in 1:5){
+  plot.temp <- suppressWarnings(
+    ggplot() + geom_polygon(
+    data = fifty_states,
+    aes(x = long, y = lat, group = group),
+    color = "white",
+    fill = "grey92") +
+    coord_sf(xlim = c(-88, -78),
+             ylim = c(24.5, 33),
+             expand = FALSE) +
+    geom_point(data = clean.df[clean.df$year == years[i],],
+               color = dotcolor,
+               aes(x = longitude,
+                   y = latitude,
+                   size = ugds_women)) +
+    scale_size(name = "", range = c(.2, 3)) +
+    guides(size = guide_legend("asians")) +
+    theme_void())
+  peeps.map[[i]] <- list(plot.temp, years[i])
+}
+```
+
+### `r asians.map[[1]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[1]][[1]]))
+```
+
+### `r asians.map[[2]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[2]][[1]]))
+```     
+
+### `r asians.map[[3]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[3]][[1]]))
+```    
+
+### `r asians.map[[4]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[4]][[1]]))
+```    
+
+### `r asians.map[[5]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[5]][[1]]))
+```    
+
+
+
+
+## Men {.tabset}
+```{r, include=FALSE}
+data("fifty_states")
+years = c(2015, 2016, 2017, 2018, "latest")
+dotcolor = "#EC407A"
+peeps.map <- list()
+
+
+for (i in 1:5){
+  plot.temp <- suppressWarnings(
+    ggplot() + geom_polygon(
+    data = fifty_states,
+    aes(x = long, y = lat, group = group),
+    color = "white",
+    fill = "grey92") +
+    coord_sf(xlim = c(-88, -78),
+             ylim = c(24.5, 33),
+             expand = FALSE) +
+    geom_point(data = clean.df[clean.df$year == years[i],],
+               color = dotcolor,
+               aes(x = longitude,
+                   y = latitude,
+                   size = ugds_men)) +
+    geom_point(data = clean.df[clean.df$year == years[i],],
+               color = '#D4E157',
+               aes(x = longitude,
+                   y = latitude,
+                   size = ugds_women)) +
+    scale_size(name = "", range = c(.2, 3)) +
+    guides(size = guide_legend("asians")) +
+    theme_void())
+  peeps.map[[i]] <- list(plot.temp, years[i])
+}
+```
+
+### `r asians.map[[1]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[1]][[1]]))
+```
+
+### `r asians.map[[2]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[2]][[1]]))
+```     
+
+### `r asians.map[[3]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[3]][[1]]))
+```    
+
+### `r asians.map[[4]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[4]][[1]]))
+```    
+
+### `r asians.map[[5]][[2]]`
+```{r, echo=FALSE}
+suppressWarnings(ggplotly(peeps.map[[5]][[1]]))
+```    
