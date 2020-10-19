@@ -552,6 +552,6 @@ plt4 <- clean.fl %>% filter(preddeg == "3" & distanceonly == "0" & control == "1
   guides(fill = FALSE)
 
 plt4
-
+```
 
 In these graphs I was just curious about the costs of attendence comparing New College with the rest of the Public Schools. I choose just to focus on Public schools as Private schools are going to be more expensive as a given. From these comparisons, we can see that New College is pretty expensive as a public school in Florida. However, the reason why New College has the lowest first gen students may be cost, but could be other things - its worth investigating this lead further. 
