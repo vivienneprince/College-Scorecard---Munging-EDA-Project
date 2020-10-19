@@ -12,6 +12,8 @@ output:
 ```{r, eval=TRUE, include=FALSE}
 
 # devtools::install_github("wmurphyrd/fiftystater")
+#install.packages("ggrepel")
+library(ggrepel)
 library(tidyverse)
 library(ggplot2)
 library(plotly)
@@ -475,4 +477,81 @@ suppressWarnings(ggplotly(peeps.map[[5]][[1]]))
 
 # AMANADS GRAPHS
 
-## amands things
+My graphs look specifically at the state of Florida to compare NCF with the rest of the state: 
+```{r, echo=FALSE}
+clean.fl <- clean.df %>% filter(stabbr == "FL" & year == "2015")
+clean.fl$ncf <- clean.fl$instnm %in% c("New College of Florida")
+
+```
+I subsetted the data to reflect this as well as created a dummy variable to denote which college is New College for graph creation.
+
+
+## First Generation Students vs. Family Income of Florida Universities  in 2015
+
+
+```{r, echo=FALSE}
+plotNCF1 <- ggplot(clean.fl, aes(x = faminc, y = first_gen, color = factor(control))) +
+  xlab("Average Family Income") + 
+  ylab("Percentage of First Generation Students") + 
+  ggtitle("First Generation Students vs. Family Income of Florida Colleges in 2015") +
+  geom_point(na.rm = TRUE) +
+  geom_text_repel(data = subset(clean.fl, first_gen < 0.15),
+                        mapping = aes(label = instnm)) +
+  theme(plot.title = element_text(hjust=0.5)) +
+  scale_colour_discrete(name = "Ownership", labels = c("Public", "Private Nonprofit", "Private For-Profit"))  
+    
+plotNCF1
+
+```
+
+In this graph, I wanted to look at the amount of first generation students that a university has and their average family income. There is the obvious negative relationship between the percentage of first gen students and average family income, as first gen students usually come from poorer families. What I am interested is the place where New College sits. Through my experience with the college, everyone came from already highly educated families that were well-off. And it seems that this is the case. New College has the lowest amount of first gen students in the state, and has a rather higher average family inc, the second highest in Public Schools. 
+
+## Percentage of White Undergraduate Students vs. Average Family Income of Florida Universities in 2015  
+
+```{r, echo = FALSE}
+
+plotNCF2 <- ggplot(clean.fl, aes(x = faminc, y = ugds_white, color = factor(control))) +
+  xlab("Average Family Income") +
+  ylab("Percentage of White Undergraduate Students") + 
+  ggtitle("White Undergrads vs. Family Income of Florida Universities in 2015") +
+  geom_point(na.rm = TRUE) + 
+  scale_colour_discrete(name = "Ownership", labels = c("Public", "Private Nonprofit", "Private For-Profit")) +
+  geom_text_repel(data = subset(clean.fl, ncf == "TRUE"),
+                        mapping = aes(label = instnm))
+
+plotNCF2
+
+```
+
+In this graph, instead of first gen students, I looked at the percentage of white students. Once again, I wanted to see the relationship between race and income, but how New College fits into the picture. As we can see, New College is fairly white, and once again pretty well-off.
+
+## Average Cost of Attendence / Tuition for All Public Florida Colleges in 2015
+
+```{r, echo = FALSE}
+
+plotNCF3 <- clean.fl %>% filter(preddeg == "3" & distanceonly == "0" & control == "1" & !is.na(costt4_a)) %>% 
+  ggplot(aes(x = reorder(instnm, costt4_a), y = costt4_a)) +
+  geom_bar(stat = "identity", aes(fill=ncf)) +
+  xlab("Average Cost of Attendence") +
+  ylab("College") + 
+  ggtitle("Average Cost for Public Florida Colleges in 2015") +
+  coord_flip() +
+  guides(fill=FALSE)
+
+plotNCF3
+```
+```{r, echo=FALSE}
+
+plt4 <- clean.fl %>% filter(preddeg == "3" & distanceonly == "0" & control == "1" & !is.na(tuitionfee_in)) %>% 
+  ggplot(aes(x = reorder(instnm, tuitionfee_in), y = tuitionfee_in)) +
+  geom_bar(stat = "identity", aes(fill=ncf)) +
+  xlab("In-State Tuition") +
+  ylab("College") + 
+  ggtitle("In-State Tuition for Public Florida Colleges in 2015") +  
+  coord_flip() + 
+  guides(fill = FALSE)
+
+plt4
+
+
+In these graphs I was just curious about the costs of attendence comparing New College with the rest of the Public Schools. I choose just to focus on Public schools as Private schools are going to be more expensive as a given. From these comparisons, we can see that New College is pretty expensive as a public school in Florida. However, the reason why New College has the lowest first gen students may be cost, but could be other things - its worth investigating this lead further. 
