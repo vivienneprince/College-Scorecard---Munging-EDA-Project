@@ -12,8 +12,6 @@ output:
 ```{r, eval=TRUE, include=FALSE}
 
 # devtools::install_github("wmurphyrd/fiftystater")
-#install.packages("ggrepel")
-library(ggrepel)
 library(tidyverse)
 library(ggplot2)
 library(plotly)
@@ -27,7 +25,12 @@ dataset.dir <- "Data"
 outputs.dir <- "Output"
 # setwd(file.path(getwd(), project.dir))
 ```
-   
+  
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
     
 # Import data
 ```{r}
@@ -93,17 +96,29 @@ qualitycheck <- function(df, critereon=3) {
 ```
       
   
-#### Quality check:
+## Quality check: {.tabset}
 ```{r}
 ordered.df <- raw.df[,order(colnames(raw.df))]
-
 data.quality <- qualitycheck(ordered.df)
-
-hist(data.quality$Ratio_Completeness)
-hist(suppressWarnings(as.numeric(data.quality$Ratio_Outliers)))
 
 # data.quality[data.quality$Ratio_Completeness == 0, 1:2]
 # data.quality[data.quality$Ratio_Outliers == 'not numeric', ]
+```
+
+### Data Quality table
+```{r, echo=FALSE}
+data.quality
+```
+
+### Ratio Completeness
+As we can see, there are a number of fields that contain little to no data (<20%)
+```{r, echo=FALSE}
+hist(data.quality$Ratio_Completeness)
+```
+
+### Ratio Outliers
+```{r, echo=FALSE}
+hist(suppressWarnings(as.numeric(data.quality$Ratio_Outliers)))
 ```
 
 
@@ -118,13 +133,10 @@ hist(qualitycheck(clean.df)$Ratio_Completeness)
 
 
 
-# Total share of enrollment of undergraduate degree-seeking students who are:
+# Where are the Asians?  
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-## Asian {.tabset}
+## Total share of enrollment of undergraduate degree-seeking students who are Asian (ugds_asian) {.tabset}
+I asked the question, "where are the Asians?" To find out, I made a graph that represents the concentration of Asian students geographically, focusing on Florida, because that is where I live. It turns out that all the Asians are in Orlando (concentration-wise). This is not surprising because the tastiest Asian restaurants I've been to in Florida has been in Orlando. They must get good business there. 
 ```{r, include=FALSE}
 data("fifty_states")
 years = c(2015, 2016, 2017, 2018, "latest")
@@ -144,9 +156,12 @@ for (i in 1:5){
              expand = FALSE) +
     geom_point(data = clean.df[clean.df$year == years[i],],
                color = colors[i],
-               aes(x = longitude,
-                   y = latitude,
+               aes(x = longitude, y = latitude,
                    size = ugds_asian)) +
+    geom_text(aes(label='Orlando', x= -80.72, y= 28.5383)) +
+    geom_point(color = "#2E4053",
+               aes(x = -81.3792, y = 28.5383,
+                   size = .03)) +
     scale_size(name = "", range = c(.2, 3)) +
     guides(size = guide_legend("asians")) +
     theme_void())
@@ -180,299 +195,17 @@ suppressWarnings(ggplotly(asians.map[[5]][[1]]))
 ```    
 
 
-
-
-## Hispanic {.tabset}
-```{r, include=FALSE}
-data("fifty_states")
-years = c(2015, 2016, 2017, 2018, "latest")
-dotcolor = "#03A9F4"
-peeps.map <- list()
-
-
-for (i in 1:5){
-  plot.temp <- suppressWarnings(
-    ggplot() + geom_polygon(
-    data = fifty_states,
-    aes(x = long, y = lat, group = group),
-    color = "white",
-    fill = "grey92") +
-    coord_sf(xlim = c(-88, -78),
-             ylim = c(24.5, 33),
-             expand = FALSE) +
-    geom_point(data = clean.df[clean.df$year == years[i],],
-               color = dotcolor,
-               aes(x = longitude,
-                   y = latitude,
-                   size = ugds_hisp)) +
-    scale_size(name = "", range = c(.2, 3)) +
-    guides(size = guide_legend("asians")) +
-    theme_void())
-  peeps.map[[i]] <- list(plot.temp, years[i])
-}
-```
-
-### `r asians.map[[1]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[1]][[1]]))
-```
-
-### `r asians.map[[2]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[2]][[1]]))
-```     
-
-### `r asians.map[[3]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[3]][[1]]))
-```    
-
-### `r asians.map[[4]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[4]][[1]]))
-```    
-
-### `r asians.map[[5]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[5]][[1]]))
-```    
+# Asians = Smart?
+## Race VS Tuition {.tabset}
+There are people who believe Asians are intrinsically 'smarter'. I don't think this is true, but I wondered if there would be a negative relationship between ratio of Asian students in the university, and admission rate. I thought about this because the Asians going to university overseas in America is a small subset of all Asian students, and it would make sense that this subset are the highest scoring Asian students (or the richest, which we will explore next) (lurking variables, yay stats class).
 
 
 
-
-## Black {.tabset}
-```{r, include=FALSE}
-data("fifty_states")
-years = c(2015, 2016, 2017, 2018, "latest")
-dotcolor = "#673AB7"
-peeps.map <- list()
-
-
-for (i in 1:5){
-  plot.temp <- suppressWarnings(
-    ggplot() + geom_polygon(
-    data = fifty_states,
-    aes(x = long, y = lat, group = group),
-    color = "white",
-    fill = "grey92") +
-    coord_sf(xlim = c(-88, -78),
-             ylim = c(24.5, 33),
-             expand = FALSE) +
-    geom_point(data = clean.df[clean.df$year == years[i],],
-               color = dotcolor,
-               aes(x = longitude,
-                   y = latitude,
-                   size = ugds_black)) +
-    scale_size(name = "", range = c(.2, 3)) +
-    guides(size = guide_legend("asians")) +
-    theme_void())
-  peeps.map[[i]] <- list(plot.temp, years[i])
-}
-```
-
-### `r asians.map[[1]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[1]][[1]]))
-```
-
-### `r asians.map[[2]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[2]][[1]]))
-```     
-
-### `r asians.map[[3]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[3]][[1]]))
-```    
-
-### `r asians.map[[4]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[4]][[1]]))
-```    
-
-### `r asians.map[[5]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[5]][[1]]))
-```    
+# Buy me a library
+## When I was in high school in China, my classmate got terrible scores, but still ended up going to a very reputable, low admissions rate university because her parents donated a sizable sum of money to the school. Wondering if there would be any positive correlation between ratio of Asian students, and average family income. 
 
 
 
-
-## White {.tabset}
-```{r, include=FALSE}
-data("fifty_states")
-years = c(2015, 2016, 2017, 2018, "latest")
-dotcolor = "#FF5722"
-peeps.map <- list()
-
-
-for (i in 1:5){
-  plot.temp <- suppressWarnings(
-    ggplot() + geom_polygon(
-    data = fifty_states,
-    aes(x = long, y = lat, group = group),
-    color = "white",
-    fill = "grey92") +
-    coord_sf(xlim = c(-88, -78),
-             ylim = c(24.5, 33),
-             expand = FALSE) +
-    geom_point(data = clean.df[clean.df$year == years[i],],
-               color = dotcolor,
-               aes(x = longitude,
-                   y = latitude,
-                   size = ugds_white)) +
-    scale_size(name = "", range = c(.2, 3)) +
-    guides(size = guide_legend("asians")) +
-    theme_void())
-  peeps.map[[i]] <- list(plot.temp, years[i])
-}
-```
-
-### `r asians.map[[1]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[1]][[1]]))
-```
-
-### `r asians.map[[2]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[2]][[1]]))
-```     
-
-### `r asians.map[[3]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[3]][[1]]))
-```    
-
-### `r asians.map[[4]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[4]][[1]]))
-```    
-
-### `r asians.map[[5]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[5]][[1]]))
-```    
-
-
-
-
-## Women {.tabset}
-```{r, include=FALSE}
-data("fifty_states")
-years = c(2015, 2016, 2017, 2018, "latest")
-dotcolor = "#D4E157"
-peeps.map <- list()
-
-
-for (i in 1:5){
-  plot.temp <- suppressWarnings(
-    ggplot() + geom_polygon(
-    data = fifty_states,
-    aes(x = long, y = lat, group = group),
-    color = "white",
-    fill = "grey92") +
-    coord_sf(xlim = c(-88, -78),
-             ylim = c(24.5, 33),
-             expand = FALSE) +
-    geom_point(data = clean.df[clean.df$year == years[i],],
-               color = dotcolor,
-               aes(x = longitude,
-                   y = latitude,
-                   size = ugds_women)) +
-    scale_size(name = "", range = c(.2, 3)) +
-    guides(size = guide_legend("asians")) +
-    theme_void())
-  peeps.map[[i]] <- list(plot.temp, years[i])
-}
-```
-
-### `r asians.map[[1]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[1]][[1]]))
-```
-
-### `r asians.map[[2]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[2]][[1]]))
-```     
-
-### `r asians.map[[3]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[3]][[1]]))
-```    
-
-### `r asians.map[[4]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[4]][[1]]))
-```    
-
-### `r asians.map[[5]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[5]][[1]]))
-```    
-
-
-
-
-## Men {.tabset}
-```{r, include=FALSE}
-data("fifty_states")
-years = c(2015, 2016, 2017, 2018, "latest")
-dotcolor = "#EC407A"
-peeps.map <- list()
-
-
-for (i in 1:5){
-  plot.temp <- suppressWarnings(
-    ggplot() + geom_polygon(
-    data = fifty_states,
-    aes(x = long, y = lat, group = group),
-    color = "white",
-    fill = "grey92") +
-    coord_sf(xlim = c(-88, -78),
-             ylim = c(24.5, 33),
-             expand = FALSE) +
-    geom_point(data = clean.df[clean.df$year == years[i],],
-               color = dotcolor,
-               aes(x = longitude,
-                   y = latitude,
-                   size = ugds_men)) +
-    geom_point(data = clean.df[clean.df$year == years[i],],
-               color = '#D4E157',
-               aes(x = longitude,
-                   y = latitude,
-                   size = ugds_women)) +
-    scale_size(name = "", range = c(.2, 3)) +
-    guides(size = guide_legend("asians")) +
-    theme_void())
-  peeps.map[[i]] <- list(plot.temp, years[i])
-}
-```
-
-### `r asians.map[[1]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[1]][[1]]))
-```
-
-### `r asians.map[[2]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[2]][[1]]))
-```     
-
-### `r asians.map[[3]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[3]][[1]]))
-```    
-
-### `r asians.map[[4]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[4]][[1]]))
-```    
-
-### `r asians.map[[5]][[2]]`
-```{r, echo=FALSE}
-suppressWarnings(ggplotly(peeps.map[[5]][[1]]))
-```    
 
 
 # AMANADS GRAPHS
