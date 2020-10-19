@@ -471,3 +471,7 @@ suppressWarnings(ggplotly(peeps.map[[4]][[1]]))
 ```{r, echo=FALSE}
 suppressWarnings(ggplotly(peeps.map[[5]][[1]]))
 ```    
+
+
+## AMANADS GRAPHS
+###
