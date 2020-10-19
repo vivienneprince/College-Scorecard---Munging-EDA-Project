@@ -12,6 +12,8 @@ output:
 ```{r, eval=TRUE, include=FALSE}
 
 # devtools::install_github("wmurphyrd/fiftystater")
+#install.packages("ggrepel")
+library(ggrepel)
 library(tidyverse)
 library(ggplot2)
 library(plotly)
