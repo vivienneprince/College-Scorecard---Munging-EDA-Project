@@ -554,4 +554,87 @@ plt4 <- clean.fl %>% filter(preddeg == "3" & distanceonly == "0" & control == "1
 plt4
 ```
 
-In these graphs I was just curious about the costs of attendence comparing New College with the rest of the Public Schools. I choose just to focus on Public schools as Private schools are going to be more expensive as a given. From these comparisons, we can see that New College is pretty expensive as a public school in Florida. However, the reason why New College has the lowest first gen students may be cost, but could be other things - its worth investigating this lead further. 
+In these graphs I was just curious about the costs of attendence comparing New College with the rest of the Public Schools. I choose just to focus on Public schools as Private schools are going to be more expensive as a given. From these comparisons, we can see that New College is pretty expensive as a public school in Florida. However, the reason why New College has the lowest first gen students may be cost, but could be other things - its worth investigating this lead further.
+
+# Online only learning vs traditional institutions comparison
+
+year = latest
+distanceonly = 1 #"Online Only"
+distanceonly = 0 #"Traditional"
+
+
+```{r}
+recent.df <- filter(clean.df, year == 'latest', !is.na(distanceonly))
+head(recent.df)
+
+onlinevstraditional.df <- select(recent.df, adm_rate, tuitfte, inexpfte, avgfacsal, pftfac, accredcode, loan_ever, pell_ever, costt4_a, costt4_p, tuitionfee_in, tuitionfee_out, tuitionfee_prog, ugds, ugds_white, ugds_black, ugds_hisp, ugds_asian, ugds_aian, ugds_nhpi, ugds_2mor, ugds_nra, ugds_unkn,   age_entry, agege24, female, married, dependent, veteran, first_gen, faminc, md_faminc, faminc_ind, median_hh_inc, poverty_rate, unemp_rate, ugds_men, ugds_women, grads, count_nwne_p6, count_wne_p6, md_earn_wne_p6, pctpell, distanceonly)
+
+onlinevstraditional.df
+```
+
+```{r}
+count(onlinevstraditional.df, distanceonly == 1)
+```
+
+## Comparison of admission rate for online only to traditional institutions
+```{r}
+ggplot(onlinevstraditional.df, aes(adm_rate, color = factor(distanceonly))) + geom_histogram(binwidth = 0.025)
+```
+This graph looks at the distribution of admission rates for institutions factored on online only.
+
+## Comparison of undergradute enrollment and graduate enrollment for online only to traditional institutions
+```{r}
+ggplot(onlinevstraditional.df, aes(ugds, color = factor(distanceonly))) + geom_histogram(binwidth = 500)
+
+ggplot(onlinevstraditional.df, aes(grads, color = factor(distanceonly))) + geom_histogram(binwidth = 500)
+```
+This graphs looks at the distribution for the number of undergraduate students and graduate students for institutions factored on online only.
+
+## Comparison of entry age for online only to traditional institutions
+```{r}
+ggplot(onlinevstraditional.df, aes(x=age_entry, color=factor(distanceonly))) + geom_bar() 
+```
+This graph looks at the distribution of students age of entry for institutions factored on distance only.
+
+## Comparison of share of male undergraduate students and share of female undergraduate students for online only to traditional institutions
+```{r}
+ggplot(onlinevstraditional.df, aes(ugds_men, color = factor(distanceonly))) + geom_histogram(binwidth = 0.025)
+
+ggplot(onlinevstraditional.df, aes(ugds_women, color = factor(distanceonly))) + geom_histogram(binwidth = 0.025)
+```
+This graphs looks at the distribution for the share of male undergraduate students and share of female undergraduate students for institutions factored on online only.
+
+Since the share of men and women equals 1 for institutions, the graphs are mirrored. 
+
+## Comparison on net tuition revenue per full-time equivalent student vs instructional expenditures per full-time equivalent student
+```{r}
+ggplot(onlinevstraditional.df, aes(x=tuitfte, y=inexpfte, color=factor(distanceonly))) +
+  geom_point() + 
+  geom_smooth(method=lm)
+```
+This graph looks at the relationship between an institution's net tuition revenue per full-time equivalent student and instructional expenditures per full-time equivalent student. The relationship appears positive for both traditional and online only institutions.
+
+## Average faculty salary vs average cost of attendance (academic year institutions) 
+```{r}
+ggplot(onlinevstraditional.df, aes(x=avgfacsal, y=costt4_a, color=factor(distanceonly))) +
+  geom_point() + 
+  geom_smooth(method=lm)
+```
+This graph looks at the relationship between an institution's average faculty salary and average cost of attendance (academic year institutions). The relationship appears positive traditional institutions, but negative for online only institutions.
+
+## Percent of students over 23 at entry vs married
+```{r}
+ggplot(onlinevstraditional.df, aes(x=agege24, y=married, color=factor(distanceonly))) +
+  geom_point() + 
+  geom_smooth(method=lm)
+```
+This graph looks at the relationship between an institution's percent of students over 23 at entry and share of married students. The relationship appears positive traditional institutions, but negative for online only institutions.
+
+## Median family income in real 2015 dollars vs Median earnings of students working and not enrolled 6 years after entry
+```{r}
+ggplot(onlinevstraditional.df, aes(x=md_faminc, y=md_earn_wne_p6, color=factor(distanceonly))) +
+  geom_point() + 
+  geom_smooth(method=lm)
+```
+This graph looks at the relationship between an institution's median family income in real 2015 dollars and median earnings of students working and not enrolled 6 years after entry. The relationship appears positive for both traditional and online only institutions.
+
