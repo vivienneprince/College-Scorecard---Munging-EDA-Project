@@ -19,12 +19,14 @@ Project 1 - Munging
   'Starfish_Data_Pull.R'  
     
   #### Final Report RMD   
-  'Team Starfish.Rmd'  
+  'Team Starfish.Rmd'
 
     
 ## output  
-  #### Final report in HTML format   
-  'TBU - danielle'  
+  #### Final report in HTML - Amanda&Stev&Viv. 
+  'Team_Starfish_Report_ASV.html'  
+  #### Final report in HTML - Danielle. 
+  'TBU - danielle'    
     
   
 ## archive_htmls:  
