@@ -433,6 +433,14 @@ ggplot(onlinevstraditional.df, aes(x=md_faminc, y=md_earn_wne_p6, color=factor(d
 This graph looks at the relationship between an institution's median family income in real 2015 dollars and median earnings of students working and not enrolled 6 years after entry. The relationship appears positive for both traditional and online only institutions.
 
 
+
+install.packages("rscorecard")
+#Load library rscorecard
+library(rscorecard)
+library(dplyr)
+#Obtain API key and load
+sc_key('f8fmT8tUvjmgBHGBinSGIS2kQdXIF5Sp4nFp74P0')
+
 ##Extract Institution Name, State Abbr, Average Sat score, InState Tuition, &Pellgrant
 # from college in SouthEast region that predominately offer Bachelors
 df2014 <- sc_init() %>% 
