@@ -28,7 +28,3 @@ Project 1 - Munging
   #### Final report in HTML - Danielle. 
   'TBU - danielle'    
     
-  
-## archive_htmls:  
-  #### Amanda&Stev&Viv Draft   
-  'merp.html'  
