@@ -12,10 +12,9 @@ output:
 ```{r, eval=TRUE, include=FALSE}
 
 # devtools::install_github("wmurphyrd/fiftystater")
-#install.packages("ggrepel")
-library(ggrepel)
 library(tidyverse)
 library(ggplot2)
+library(ggrepel)
 library(plotly)
 library(sf)
 library(googlesheets4)
@@ -29,8 +28,8 @@ outputs.dir <- "Output"
 ```
   
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup,include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
     
@@ -134,10 +133,11 @@ hist(qualitycheck(clean.df)$Ratio_Completeness)
 ```
 
 
+# Asians!
 
-# Where are the Asians?  
+## Where are the Asians?  
 
-## Total share of enrollment of undergraduate degree-seeking students who are Asian (ugds_asian) {.tabset}
+### Total share of enrollment of undergraduate degree-seeking students who are Asian (ugds_asian) {.tabset}
 I asked the question, "where are the Asians?" To find out, I made a graph that represents the concentration of Asian students geographically, focusing on Florida, because that is where I live. It turns out that all the Asians are in Orlando (concentration-wise). This is not surprising because the tastiest Asian restaurants I've been to in Florida has been in Orlando. They must get good business there. 
 ```{r, include=FALSE}
 data("fifty_states")
@@ -160,7 +160,7 @@ for (i in 1:5){
                color = colors[i],
                aes(x = longitude, y = latitude,
                    size = ugds_asian)) +
-    geom_text(aes(label='Orlando', x= -80.72, y= 28.5383)) +
+    geom_text(aes(label='Orlando', x= -80.6, y= 28.5383)) +
     geom_point(color = "#2E4053",
                aes(x = -81.3792, y = 28.5383,
                    size = .03)) +
@@ -171,52 +171,106 @@ for (i in 1:5){
 }
 ```
 
-### `r asians.map[[1]][[2]]`
+#### `r asians.map[[1]][[2]]`
 ```{r, echo=FALSE}
 suppressWarnings(ggplotly(asians.map[[1]][[1]]))
 ```
 
-### `r asians.map[[2]][[2]]`
+#### `r asians.map[[2]][[2]]`
 ```{r, echo=FALSE}
 suppressWarnings(ggplotly(asians.map[[2]][[1]]))
 ```     
 
-### `r asians.map[[3]][[2]]`
+#### `r asians.map[[3]][[2]]`
 ```{r, echo=FALSE}
 suppressWarnings(ggplotly(asians.map[[3]][[1]]))
 ```    
 
-### `r asians.map[[4]][[2]]`
+#### `r asians.map[[4]][[2]]`
 ```{r, echo=FALSE}
 suppressWarnings(ggplotly(asians.map[[4]][[1]]))
 ```    
 
-### `r asians.map[[5]][[2]]`
+#### `r asians.map[[5]][[2]]`
 ```{r, echo=FALSE}
 suppressWarnings(ggplotly(asians.map[[5]][[1]]))
 ```    
 
 
-# Asians = Smart?
-## Race VS Tuition {.tabset}
-There are people who believe Asians are intrinsically 'smarter'. I don't think this is true, but I wondered if there would be a negative relationship between ratio of Asian students in the university, and admission rate. I thought about this because the Asians going to university overseas in America is a small subset of all Asian students, and it would make sense that this subset are the highest scoring Asian students (or the richest, which we will explore next) (lurking variables, yay stats class).
+## Asians = Smart?
+
+### Race VS Admissions {.tabset}
+There are people who believe Asians are intrinsically 'smarter'. I don't think this is true, but I wondered if there would be a negative relationship between ratio of Asian students in the university, and admission rate. I thought about this because the Asians going to university overseas in America is a small subset of all Asian students, and it would make sense that this subset are the highest scoring Asian students (or the richest) (lurking variables, yay stats class).
+From the graphs, it looks like Asians are the only ones with a negative correlation, so my hypothesis stands, but I wouldn't say causation is determined.  
+
+```{r, include=FALSE}
+# OK I DONT KNOW WHY BUT THIS DOES NOT WORK AND IM SAD
+races = c("ugds_asian", "ugds_white", "ugds_black", "ugds_hisp")
+admissions.plots <- list()
+
+for (i in 1:4){
+  plot.temp <- ggplot(subset(clean.df, year=="latest"), 
+         aes(x = adm_rate, y = eval(parse(text = races[i])), color = "#EC407A")) +
+    xlim(c(0,1)) +
+    ylim(c(0,0.3)) +
+    xlab("Admission Rate") +
+    ylab("Percentage of Undergraduate Students by Race") + 
+    geom_point(na.rm = TRUE)
+  admissions.plots[[i]] <- list(plot.temp, races[i])
+}
+```
+
+#### Asians
+```{r, echo=FALSE}
+ggplot(subset(clean.df, year=="latest"), aes(x = adm_rate, y = ugds_asian, color = "#EC407A")) +
+  xlim(c(0,1)) +
+  ylim(c(0,0.3)) +
+  xlab("Admission Rate") +
+  ylab("Percentage of Undergraduate Students by Race") + 
+  geom_point(na.rm = TRUE)
+
+```
+
+#### White
+```{r, echo=FALSE}
+ggplot(subset(clean.df, year=="latest"), aes(x = adm_rate, y = ugds_white, color = "#EC407A")) +
+  xlim(c(0,1)) +
+  ylim(c(0,0.3)) +
+  xlab("Admission Rate") +
+  ylab("Percentage of Undergraduate Students by Race") + 
+  geom_point(na.rm = TRUE)
+
+```
+
+#### Black
+```{r, echo=FALSE}
+ggplot(subset(clean.df, year=="latest"), aes(x = adm_rate, y = ugds_black, color = "#EC407A")) +
+  xlim(c(0,1)) +
+  ylim(c(0,0.3)) +
+  xlab("Admission Rate") +
+  ylab("Percentage of Undergraduate Students by Race") +
+  geom_point(na.rm = TRUE)
+
+```
+
+#### Hispanic
+```{r, echo=FALSE}
+ggplot(subset(clean.df, year=="latest"), aes(x = adm_rate, y = ugds_hisp, color = "#EC407A")) +
+  xlim(c(0,1)) +
+  ylim(c(0,0.3)) +
+  xlab("Admission Rate") +
+  ylab("Percentage of Undergraduate Students by Race") +
+  geom_point(na.rm = TRUE)
+
+```
 
 
-
-# Buy me a library
-## When I was in high school in China, my classmate got terrible scores, but still ended up going to a very reputable, low admissions rate university because her parents donated a sizable sum of money to the school. Wondering if there would be any positive correlation between ratio of Asian students, and average family income. 
-
-
-
-
-
-# AMANADS GRAPHS
+# A look at NCF
 
 My graphs look specifically at the state of Florida to compare NCF with the rest of the state: 
 ```{r, echo=FALSE}
 clean.fl <- clean.df %>% filter(stabbr == "FL" & year == "2015")
 clean.fl$ncf <- clean.fl$instnm %in% c("New College of Florida")
-
 ```
 I subsetted the data to reflect this as well as created a dummy variable to denote which college is New College for graph creation.
 
@@ -236,7 +290,6 @@ plotNCF1 <- ggplot(clean.fl, aes(x = faminc, y = first_gen, color = factor(contr
   scale_colour_discrete(name = "Ownership", labels = c("Public", "Private Nonprofit", "Private For-Profit"))  
     
 plotNCF1
-
 ```
 
 In this graph, I wanted to look at the amount of first generation students that a university has and their average family income. There is the obvious negative relationship between the percentage of first gen students and average family income, as first gen students usually come from poorer families. What I am interested is the place where New College sits. Through my experience with the college, everyone came from already highly educated families that were well-off. And it seems that this is the case. New College has the lowest amount of first gen students in the state, and has a rather higher average family inc, the second highest in Public Schools. 
@@ -244,7 +297,6 @@ In this graph, I wanted to look at the amount of first generation students that 
 ## Percentage of White Undergraduate Students vs. Average Family Income of Florida Universities in 2015  
 
 ```{r, echo = FALSE}
-
 plotNCF2 <- ggplot(clean.fl, aes(x = faminc, y = ugds_white, color = factor(control))) +
   xlab("Average Family Income") +
   ylab("Percentage of White Undergraduate Students") + 
@@ -253,9 +305,7 @@ plotNCF2 <- ggplot(clean.fl, aes(x = faminc, y = ugds_white, color = factor(cont
   scale_colour_discrete(name = "Ownership", labels = c("Public", "Private Nonprofit", "Private For-Profit")) +
   geom_text_repel(data = subset(clean.fl, ncf == "TRUE"),
                         mapping = aes(label = instnm))
-
 plotNCF2
-
 ```
 
 In this graph, instead of first gen students, I looked at the percentage of white students. Once again, I wanted to see the relationship between race and income, but how New College fits into the picture. As we can see, New College is fairly white, and once again pretty well-off.
@@ -263,7 +313,6 @@ In this graph, instead of first gen students, I looked at the percentage of whit
 ## Average Cost of Attendence / Tuition for All Public Florida Colleges in 2015
 
 ```{r, echo = FALSE}
-
 plotNCF3 <- clean.fl %>% filter(preddeg == "3" & distanceonly == "0" & control == "1" & !is.na(costt4_a)) %>% 
   ggplot(aes(x = reorder(instnm, costt4_a), y = costt4_a)) +
   geom_bar(stat = "identity", aes(fill=ncf)) +
@@ -272,11 +321,9 @@ plotNCF3 <- clean.fl %>% filter(preddeg == "3" & distanceonly == "0" & control =
   ggtitle("Average Cost for Public Florida Colleges in 2015") +
   coord_flip() +
   guides(fill=FALSE)
-
 plotNCF3
 ```
 ```{r, echo=FALSE}
-
 plt4 <- clean.fl %>% filter(preddeg == "3" & distanceonly == "0" & control == "1" & !is.na(tuitionfee_in)) %>% 
   ggplot(aes(x = reorder(instnm, tuitionfee_in), y = tuitionfee_in)) +
   geom_bar(stat = "identity", aes(fill=ncf)) +
@@ -285,7 +332,6 @@ plt4 <- clean.fl %>% filter(preddeg == "3" & distanceonly == "0" & control == "1
   ggtitle("In-State Tuition for Public Florida Colleges in 2015") +  
   coord_flip() + 
   guides(fill = FALSE)
-
 plt4
 ```
 
@@ -298,78 +344,90 @@ distanceonly = 1 #"Online Only"
 distanceonly = 0 #"Traditional"
 
 
-```{r}
+```{r, include=FALSE}
 recent.df <- filter(clean.df, year == 'latest', !is.na(distanceonly))
 head(recent.df)
-
 onlinevstraditional.df <- select(recent.df, adm_rate, tuitfte, inexpfte, avgfacsal, pftfac, accredcode, loan_ever, pell_ever, costt4_a, costt4_p, tuitionfee_in, tuitionfee_out, tuitionfee_prog, ugds, ugds_white, ugds_black, ugds_hisp, ugds_asian, ugds_aian, ugds_nhpi, ugds_2mor, ugds_nra, ugds_unkn,   age_entry, agege24, female, married, dependent, veteran, first_gen, faminc, md_faminc, faminc_ind, median_hh_inc, poverty_rate, unemp_rate, ugds_men, ugds_women, grads, count_nwne_p6, count_wne_p6, md_earn_wne_p6, pctpell, distanceonly)
-
 onlinevstraditional.df
 ```
 
-```{r}
+```{r, echo=FALSE}
 count(onlinevstraditional.df, distanceonly == 1)
 ```
 
-## Comparison of admission rate for online only to traditional institutions
-```{r}
-ggplot(onlinevstraditional.df, aes(adm_rate, color = factor(distanceonly))) + geom_histogram(binwidth = 0.025)
-```
-This graph looks at the distribution of admission rates for institutions factored on online only.
+## Comparison of admission rate for online only to traditional institutions   
+```{r, echo=FALSE}
+suppressWarnings(
+ggplot(onlinevstraditional.df, aes(adm_rate, color = factor(distanceonly))) + geom_histogram(binwidth = 0.025))
+```   
+  
+This graph looks at the distribution of admission rates for institutions factored on online only.  
 
 ## Comparison of undergradute enrollment and graduate enrollment for online only to traditional institutions
-```{r}
-ggplot(onlinevstraditional.df, aes(ugds, color = factor(distanceonly))) + geom_histogram(binwidth = 500)
-
-ggplot(onlinevstraditional.df, aes(grads, color = factor(distanceonly))) + geom_histogram(binwidth = 500)
-```
+```{r, echo=FALSE}
+suppressWarnings(
+ggplot(onlinevstraditional.df, aes(ugds, color = factor(distanceonly))) + geom_histogram(binwidth = 500))
+suppressWarnings(
+ggplot(onlinevstraditional.df, aes(grads, color = factor(distanceonly))) + geom_histogram(binwidth = 500))
+```  
+  
 This graphs looks at the distribution for the number of undergraduate students and graduate students for institutions factored on online only.
 
-## Comparison of entry age for online only to traditional institutions
-```{r}
-ggplot(onlinevstraditional.df, aes(x=age_entry, color=factor(distanceonly))) + geom_bar() 
-```
+## Comparison of entry age for online only to traditional institutions  
+```{r, echo=FALSE}
+suppressWarnings(
+ggplot(onlinevstraditional.df, aes(x=age_entry, color=factor(distanceonly))) + geom_bar() )
+```   
+  
 This graph looks at the distribution of students age of entry for institutions factored on distance only.
 
 ## Comparison of share of male undergraduate students and share of female undergraduate students for online only to traditional institutions
-```{r}
-ggplot(onlinevstraditional.df, aes(ugds_men, color = factor(distanceonly))) + geom_histogram(binwidth = 0.025)
-
-ggplot(onlinevstraditional.df, aes(ugds_women, color = factor(distanceonly))) + geom_histogram(binwidth = 0.025)
+```{r, echo=FALSE}
+suppressWarnings(
+ggplot(onlinevstraditional.df, aes(ugds_men, color = factor(distanceonly))) + geom_histogram(binwidth = 0.025))
+suppressWarnings(
+ggplot(onlinevstraditional.df, aes(ugds_women, color = factor(distanceonly))) + geom_histogram(binwidth = 0.025))
 ```
 This graphs looks at the distribution for the share of male undergraduate students and share of female undergraduate students for institutions factored on online only.
 
 Since the share of men and women equals 1 for institutions, the graphs are mirrored. 
 
-## Comparison on net tuition revenue per full-time equivalent student vs instructional expenditures per full-time equivalent student
-```{r}
+## Comparison on net tuition revenue per full-time equivalent student vs instructional expenditures per full-time equivalent student  
+```{r, echo=FALSE}
+suppressWarnings(
 ggplot(onlinevstraditional.df, aes(x=tuitfte, y=inexpfte, color=factor(distanceonly))) +
   geom_point() + 
-  geom_smooth(method=lm)
-```
+  geom_smooth(method=lm))
+```   
+  
 This graph looks at the relationship between an institution's net tuition revenue per full-time equivalent student and instructional expenditures per full-time equivalent student. The relationship appears positive for both traditional and online only institutions.
 
-## Average faculty salary vs average cost of attendance (academic year institutions) 
-```{r}
+## Average faculty salary vs average cost of attendance (academic year institutions)   
+```{r, echo=FALSE}
+suppressWarnings(
 ggplot(onlinevstraditional.df, aes(x=avgfacsal, y=costt4_a, color=factor(distanceonly))) +
   geom_point() + 
-  geom_smooth(method=lm)
-```
-This graph looks at the relationship between an institution's average faculty salary and average cost of attendance (academic year institutions). The relationship appears positive traditional institutions, but negative for online only institutions.
+  geom_smooth(method=lm))
+```   
 
-## Percent of students over 23 at entry vs married
-```{r}
+This graph looks at the relationship between an institution's average faculty salary and average cost of attendance (academic year institutions). The relationship appears positive traditional institutions, but negative for online only institutions.  
+
+## Percent of students over 23 at entry vs married  
+```{r, echo=FALSE}
+suppressWarnings(
 ggplot(onlinevstraditional.df, aes(x=agege24, y=married, color=factor(distanceonly))) +
   geom_point() + 
-  geom_smooth(method=lm)
-```
-This graph looks at the relationship between an institution's percent of students over 23 at entry and share of married students. The relationship appears positive traditional institutions, but negative for online only institutions.
+  geom_smooth(method=lm))
+```   
 
-## Median family income in real 2015 dollars vs Median earnings of students working and not enrolled 6 years after entry
-```{r}
+This graph looks at the relationship between an institution's percent of students over 23 at entry and share of married students. The relationship appears positive traditional institutions, but negative for online only institutions.   
+
+## Median family income in real 2015 dollars vs Median earnings of students working and not enrolled 6 years after entry  
+```{r, echo=FALSE}
+suppressWarnings(
 ggplot(onlinevstraditional.df, aes(x=md_faminc, y=md_earn_wne_p6, color=factor(distanceonly))) +
   geom_point() + 
-  geom_smooth(method=lm)
-```
-This graph looks at the relationship between an institution's median family income in real 2015 dollars and median earnings of students working and not enrolled 6 years after entry. The relationship appears positive for both traditional and online only institutions.
+  geom_smooth(method=lm))
+```   
 
+This graph looks at the relationship between an institution's median family income in real 2015 dollars and median earnings of students working and not enrolled 6 years after entry. The relationship appears positive for both traditional and online only institutions.
