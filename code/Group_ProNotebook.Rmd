@@ -1,0 +1,271 @@
+---
+title: "Data Mung Danielle"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+```{r}
+#Install CollegeScorecard Data 
+#Load library rscorecard
+library(rscorecard)
+library(dplyr)
+#Obtain API key and load
+sc_key('f8fmT8tUvjmgBHGBinSGIS2kQdXIF5Sp4nFp74P0')
+
+```
+
+```{r}
+##Extract Institution Name, State Abbr, Average Sat score, InState Tuition, &Pellgrant
+# from college in SouthEast region that predominately offer Bachelors
+
+df2014 <- sc_init() %>% 
+  sc_filter(region == 5,preddeg == 3) %>% 
+  sc_select( instnm, stabbr, sat_avg, tuitionfee_in, pctpell
+) %>% 
+  sc_year(2014) %>% 
+  sc_get(
+         debug = FALSE,
+         print_key_debug = FALSE,
+         return_json = FALSE
+  )
+
+df2014
+```
+```{r}
+#2015
+df2015 <- sc_init() %>% 
+  sc_filter(region == 5,preddeg == 3) %>% 
+  sc_select( instnm, stabbr, sat_avg, tuitionfee_in, pctpell
+  ) %>% 
+  sc_year(2015) %>% 
+  sc_get(
+    debug = FALSE,
+    print_key_debug = FALSE,
+    return_json = FALSE
+  )
+df2015
+summary(df2015)
+```
+```{r}
+#2016
+df2016 <- sc_init() %>% 
+  sc_filter(region == 5,preddeg == 3) %>% 
+  sc_select( instnm, stabbr, sat_avg, tuitionfee_in, pctpell
+  ) %>% 
+  sc_year(2016) %>% 
+  sc_get(
+    debug = FALSE,
+    print_key_debug = FALSE,
+    return_json = FALSE
+  )
+df2016
+summary(df2016)
+```
+
+
+```{r}
+#2017
+df2017 <- sc_init() %>% 
+  sc_filter(region == 5,preddeg == 3) %>% 
+  sc_select( instnm, stabbr, sat_avg, tuitionfee_in, pctpell
+  ) %>% 
+  sc_year(2017) %>% 
+  sc_get(
+    debug = FALSE,
+    print_key_debug = FALSE,
+    return_json = FALSE
+  )
+df2017
+summary(df2017)
+```
+```{r}
+#2018
+df2018 <- sc_init() %>% 
+  sc_filter(region == 5,preddeg == 3) %>% 
+  sc_select( instnm, stabbr, sat_avg, tuitionfee_in, pctpell
+  ) %>% 
+  sc_year(2018) %>% 
+  sc_get(
+    debug = FALSE,
+    print_key_debug = FALSE,
+    return_json = FALSE
+  )
+
+summary(df2018)
+```
+
+```{r}
+#df18-df16 data frame without Institution/ State Abbr. to plot graphs
+
+df18 <- sc_init() %>% 
+  sc_filter(region == 5,preddeg == 3) %>% 
+  sc_select(sat_avg, tuitionfee_in, pctpell
+  ) %>% 
+  sc_year(2018) %>% 
+  sc_get(
+    debug = FALSE,
+    print_key_debug = FALSE,
+    return_json = FALSE
+  )
+
+df17<- sc_init() %>% 
+  sc_filter(region == 5,preddeg == 3 ) %>% 
+  sc_select( sat_avg, tuitionfee_in, pctpell
+  ) %>% 
+  sc_year(2017) %>% 
+  sc_get(
+    debug = FALSE,
+    print_key_debug = FALSE,
+    return_json = FALSE
+  )
+df16<- sc_init() %>% 
+  sc_filter(region == 5,preddeg == 3 ) %>% 
+  sc_select( sat_avg, tuitionfee_in, pctpell
+  ) %>% 
+  sc_year(2016) %>% 
+  sc_get(
+    debug = FALSE,
+    print_key_debug = FALSE,
+    return_json = FALSE
+  )
+df15<- sc_init() %>% 
+  sc_filter(region == 5,preddeg == 3 ) %>% 
+  sc_select( sat_avg, tuitionfee_in, pctpell
+  ) %>% 
+  sc_year(2015) %>% 
+  sc_get(
+    debug = FALSE,
+    print_key_debug = FALSE,
+    return_json = FALSE
+  )
+df14<- sc_init() %>% 
+  sc_filter(region == 5,preddeg == 3 ) %>% 
+  sc_select( sat_avg, tuitionfee_in, pctpell
+  ) %>% 
+  sc_year(2014) %>% 
+  sc_get(
+    debug = FALSE,
+    print_key_debug = FALSE,
+    return_json = FALSE
+  )
+
+
+
+
+```
+```{r}
+
+#install libraries
+library(ggplot2)
+
+
+```
+
+```
+```{r}
+#Clean data of NAs
+attach(df14)
+attach(df15)
+attach(df16)
+attach(df18)
+df14n<-df14 %>% dplyr::filter(!is.na(sat_avg), !is.na(pctpell), !is.na(tuitionfee_in))
+df14n  
+df15n<-df15 %>% dplyr::filter(!is.na(sat_avg), !is.na(pctpell), !is.na(tuitionfee_in))
+df15n
+df16n<-df16 %>% dplyr::filter(!is.na(sat_avg), !is.na(pctpell), !is.na(tuitionfee_in))
+df16n
+df17n<-df17 %>% dplyr::filter(!is.na(sat_avg), !is.na(pctpell), !is.na(tuitionfee_in))
+df17n 
+df18n<-df18 %>% dplyr::filter(!is.na(sat_avg), !is.na(pctpell), !is.na(tuitionfee_in))
+summary(df18n)
+
+```
+
+
+
+```{r}
+#Exploring Sat Score and Percentage of PellGrant Students
+
+df18_pl<-ggplot(df18n , aes(x= sat_avg, y=pctpell))+ geom_jitter(alpha = 0.6)+ stat_smooth(method = "lm", se = F, col="blue")+  ggtitle ("2018 SAT Scores and % of Pell Grant Students")+
+  scale_x_continuous("sat_avg", limits = c(700,1550), expand = c(0,0))
+
+df18_pl
+```
+
+
+```{r}
+#Condition variable based on Tuition
+tuitiongroup <- cut(df14n$tuitionfee_in, c(0,9000,18000,30000,55000))
+levels(tuitiongroup) <- c("Cheap" ,"Average","Above Average", "Expensive")
+plot(tuitiongroup)
+
+df14_pltuition<-ggplot(df14n , aes(x= sat_avg, y=pctpell, color = tuitiongroup))+ geom_jitter(alpha = 0.6)+ 
+    ggtitle ("SAT Scores and % of Pell Grant Students w/ Tuition") + 
+    geom_point(data= subset(df14n, tuitiongroup %in% c("Cheap", "Average", "Above Average", "Expensive")))
+    
+df14_pltuition
+```
+
+```{r, include=FALSE}
+library(sf)
+library(raster)
+library(dplyr)
+library(spData)
+library(tmap) 
+library(leaflet)
+devtools::install_github("wmurphyrd/fiftystater")
+library(fiftystater)
+
+data("fifty_states")
+```
+``
+
+```{r}
+#Pull Median Debt for first Generation Students
+
+Southeastinc <- sc_init() %>% 
+  sc_filter(region == 5, preddeg == 3) %>% 
+  sc_select( instnm, age_entry, loan_ever  
+  ) %>% 
+  sc_year(2016) %>% 
+  sc_get(
+    debug = FALSE,
+    print_key_debug = FALSE,
+    return_json = FALSE
+  )
+  
+Southeastinc
+```
+
+
+
+```
+```{r}
+#Clean NAs
+Southeastincn<-Southeastinc %>% dplyr::filter(!is.na(age_entry), !is.na(loan_ever))
+
+Southeastincn
+
+```
+```{r}
+#subsetdata by age
+summary(Southeastincn)
+agegroup <- cut(Southeastincn$age_entry, c(18,20,25,28,50))
+levels(agegroup) <- c("Teen" ,"Early 20s","Mid20s", "Mature")
+
+ggplot(Southeastincn,
+       aes(x = age_entry, y = loan_ever, colour = agegroup)) +
+  geom_point(alpha = 0.3,  position = position_jitter()) + stat_smooth(method = "lm") +
+  coord_cartesian()
+
+```
+
+
+```{r}
+#showing Overlapping of agegroups
+ggplot(Southeastincn, aes(x = age_entry, y = loan_ever, colour = agegroup, shape = as.factor(agegroup))) +
+  geom_point(alpha = 0.3,  position = position_jitter())
+```
+
