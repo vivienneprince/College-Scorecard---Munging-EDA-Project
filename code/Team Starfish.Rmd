@@ -36,7 +36,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 # Import data
 ```{r}
 # Import raw data
-raw.df <- read.csv("https://github.com/vivienneprince/College-Scorecard---Munging-EDA-Project/raw/main/data/Starfish_Fields%20-%20Sheet1.csv")
+raw.df <- read.csv("https://raw.githubusercontent.com/vivienneprince/College-Scorecard---Munging-EDA-Project/main/data/starfishdf.csv")
 
 # Import field variables
 gs4_deauth()
