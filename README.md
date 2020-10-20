@@ -3,11 +3,11 @@ Project 1 - Munging
   
   
 ## data:  
-  ### Raw data file used in report   
+  #### Raw data file used in report   
   'starfishdf.csv'    
   Data pull script using API in /code  
     
-  ### Scope   
+  #### Scope   
   'Starfish_Fields - Sheet1.csv'  
   Years: 2015-latest (2019-2020)  
   Region: 5 (Southeast (AL, AR, FL, GA, KY, LA, MS, NC, SC, TN, VA, WV))  
@@ -15,18 +15,18 @@ Project 1 - Munging
   
   
 ## code:  
-  ### API data pull script   
+  #### API data pull script   
   'Starfish_Data_Pull.R'  
     
-  ### Final Report RMD   
+  #### Final Report RMD   
   'Team Starfish.Rmd'  
 
     
 ## output  
-  ### Final report in HTML format   
+  #### Final report in HTML format   
   'TBU - danielle'  
     
   
 ## archive_htmls:  
-  ### Amanda&Stev&Viv Draft   
+  #### Amanda&Stev&Viv Draft   
   'merp.html'  
